@@ -1,3 +1,7 @@
+[![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/sr1ch1/apollo-fetcher-stub/test.yml)](https://github.com/sr1ch1/apollo-fetcher-stub/actions?query=branch%3Amain)
+[![Coverage Status](https://coveralls.io/repos/github/sr1ch1/apollo-fetcher-stub/badge.svg?branch=main)](https://coveralls.io/github/sr1ch1/apollo-fetcher-stub?branch=main)
+[![npm](https://img.shields.io/npm/v/@sr1ch1/apollo-fetcher-stub)](https://www.npmjs.com/package/@sr1ch1/apollo-fetcher-stub)
+[![GitHub](https://img.shields.io/github/license/sr1ch1/apollo-fetcher-stub)](https://opensource.org/licenses/MIT)
 # apollo-fetcher-stub
 A stub version of the Apollo Server's fetcher interface to simplify integration testing of resolvers that are
 based on Apollo Server's RESTDataSource.
