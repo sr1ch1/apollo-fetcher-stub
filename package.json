@@ -1,6 +1,6 @@
 {
   "name": "@sr1ch1/apollo-fetcher-stub",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "A stub version of the apollo fetcher to be used for integration testing.",
   "types": "./lib/cjs/types/index.d.ts",
   "main": "./lib/cjs/index.js",

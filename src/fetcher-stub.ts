@@ -7,7 +7,7 @@ import {StubHeaderData} from "./stub-header-data";
 import buildRequestMatcher, {createExactMatcher} from "./build-request-matcher";
 
 export class FetcherStubError extends Error {
-  constructor(msg: string, public requestMatcher: string[]) {
+  constructor(msg: string, public request: string, public requestMatcher: string[]) {
     super(msg);
     Object.setPrototypeOf(this, FetcherStubError.prototype);
   }
@@ -53,7 +53,7 @@ export class FetcherStub {
         if (response) {
           return Promise.resolve(response)
         }
-        throw new FetcherStubError('Stub not prepared properly', this._resolver.getMatchingRequests());
+        throw new FetcherStubError('Stub not prepared properly', request, this._resolver.getMatchingRequests());
       }
     }
   }

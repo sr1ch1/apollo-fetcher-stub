@@ -15,7 +15,7 @@ describe('SimpleFetcherResponse', () => {
 
         // test ctor for good measure.
         expect(new SimpleFetcherResponse()).not.toBeNull();
-        expect(new FetcherStubError('error', [])).not.toBeNull();
+        expect(new FetcherStubError('error', 'http://localhost',[])).not.toBeNull();
         expect(await response.text()).toBe(bodyText);
     });
 
