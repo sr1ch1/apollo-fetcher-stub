@@ -1,7 +1,8 @@
 import {HttpMethod} from "./http-method";
-import {ResolverDictionary} from "./resolver-dictionary";
+import {RequestResolver} from "./request-resolver";
 import {StubHeaderData} from "./stub-header-data";
 import {FetcherStubResponse, IFetcherStubResponse} from "./fetcher-stub-response";
+import {createExactMatcher, createRegexMatcher} from "./build-request-matcher";
 
 export interface IFetcherStubRequest {
   withHeader(key: string, value: string): IFetcherStubRequest;
@@ -15,7 +16,7 @@ export class FetcherStubRequest implements IFetcherStubRequest {
   private readonly _headers: StubHeaderData = new StubHeaderData();
   private _body = '';
 
-  constructor(private _method: HttpMethod, private _url: string, private _resolveDictionary: ResolverDictionary) {}
+  constructor(private _method: HttpMethod, private _url: string | RegExp, private _resolver: RequestResolver) {}
 
   withHeader(key: string, value: string): IFetcherStubRequest {
     this._headers.set(key, value);
@@ -31,6 +32,7 @@ export class FetcherStubRequest implements IFetcherStubRequest {
   }
 
   responds() : IFetcherStubResponse {
-    return new FetcherStubResponse(this._method, this._url, this._headers, this._body, this._resolveDictionary);
+    const urlMatcher = this._url instanceof RegExp? createRegexMatcher(this._url) : createExactMatcher(this._url);
+    return new FetcherStubResponse(this._method, urlMatcher, this._headers, this._body, this._resolver);
   }
 }

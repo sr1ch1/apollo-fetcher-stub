@@ -1,52 +1,59 @@
 import {HttpMethod} from "./http-method";
 import {FetcherStubRequest, IFetcherStubRequest} from "./fetcher-stub-request";
-import {ResolverDictionary} from "./resolver-dictionary";
+import {RequestResolver} from "./request-resolver";
 import type {FetcherRequestInit} from "@apollo/utils.fetcher";
-import {StubHeaderData} from "./stub-header-data";
-import buildRequestString from "./build-request-string";
 import {FetcherResponse} from "@apollo/utils.fetcher";
+import {StubHeaderData} from "./stub-header-data";
+import buildRequestMatcher, {createExactMatcher} from "./build-request-matcher";
+
+export class FetcherStubError extends Error {
+  constructor(msg: string, public requestMatcher: string[]) {
+    super(msg);
+    Object.setPrototypeOf(this, FetcherStubError.prototype);
+  }
+}
 
 export class FetcherStub {
   // this maps an HTTP request to an expected HTTP response
-  readonly _resolverDictionary: ResolverDictionary = new ResolverDictionary();
+  readonly _resolver: RequestResolver = new RequestResolver();
 
-  get(url: string): IFetcherStubRequest {
-    return new FetcherStubRequest(HttpMethod.GET, url, this._resolverDictionary)
+  get(url: string | RegExp): IFetcherStubRequest {
+    return new FetcherStubRequest(HttpMethod.GET, url, this._resolver)
   }
 
-  head(url: string): IFetcherStubRequest {
-    return new FetcherStubRequest(HttpMethod.HEAD, url, this._resolverDictionary)
+  head(url: string | RegExp): IFetcherStubRequest {
+    return new FetcherStubRequest(HttpMethod.HEAD, url, this._resolver)
   }
 
-  post(url: string): IFetcherStubRequest {
-    return new FetcherStubRequest(HttpMethod.POST, url, this._resolverDictionary)
+  post(url: string | RegExp): IFetcherStubRequest {
+    return new FetcherStubRequest(HttpMethod.POST, url, this._resolver)
   }
 
-  put(url: string): IFetcherStubRequest {
-    return new FetcherStubRequest(HttpMethod.PUT, url, this._resolverDictionary)
+  put(url: string | RegExp): IFetcherStubRequest {
+    return new FetcherStubRequest(HttpMethod.PUT, url, this._resolver)
   }
 
-  patch(url: string): IFetcherStubRequest {
-    return new FetcherStubRequest(HttpMethod.PATCH, url, this._resolverDictionary)
+  patch(url: string | RegExp): IFetcherStubRequest {
+    return new FetcherStubRequest(HttpMethod.PATCH, url, this._resolver)
   }
 
-  delete(url: string): IFetcherStubRequest {
-    return new FetcherStubRequest(HttpMethod.DELETE, url, this._resolverDictionary)
+  delete(url: string | RegExp): IFetcherStubRequest {
+    return new FetcherStubRequest(HttpMethod.DELETE, url, this._resolver)
   }
 
-  options(url: string): IFetcherStubRequest {
-    return new FetcherStubRequest(HttpMethod.OPTIONS, url, this._resolverDictionary)
+  options(url: string | RegExp): IFetcherStubRequest {
+    return new FetcherStubRequest(HttpMethod.OPTIONS, url, this._resolver)
   }
 
   public get fetcher() {
     return {
       fetch: (url: string, _init?: FetcherRequestInit): Promise<FetcherResponse> => {
         const request = this.buildRequest(url, _init);
-        const response = this._resolverDictionary.get(request);
+        const response = this._resolver.resolve(url, request);
         if (response) {
           return Promise.resolve(response)
         }
-          throw new Error('Stub not prepared properly');
+        throw new FetcherStubError('Stub not prepared properly', this._resolver.getMatchingRequests());
       }
     }
   }
@@ -58,6 +65,8 @@ export class FetcherStub {
         headers.set(key, _init.headers[key]);
       }
     }
-    return buildRequestString(_init?.method || HttpMethod.GET, url, headers, _init?.body?.toString() || '');
+    const requestMatcher = buildRequestMatcher(_init?.method || HttpMethod.GET,
+        createExactMatcher(url), headers, _init?.body?.toString() || '');
+    return requestMatcher.payload as string;
   }
 }

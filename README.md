@@ -41,7 +41,7 @@ or with yarn:
 
 ## Usage
 As this library is intended to be used as a fetcher replacement the documentation will 
-focus on the described pattern above.It is not are requirement to rely on the 
+focus on the described pattern above. It is not are requirement to rely on the 
 RESTDataSource class. The fetcher stub can be used in any context where Apollo's fetcher 
 interface is used.
 
@@ -52,16 +52,16 @@ implemented a data source based on the RESTDataSource
 // this is the implementation of a specific data source based on Apollo Server's RESTDataSource
 export class ExampleAPI extends RestDataSource {
   // ... implementation of getData as an example of a function to be made available
-  // if this contains non trivial transformations, you may also want to test this.
+  // if this contains nontrivial transformations, you may also want to test this.
 }
 ```
 Furthermore, you have a resolver that uses this data source
 ```typescript
 export const exampleResolver = {
   Query: {
-    populations: async (_, __, {dataSources}) : Promise<void>  => {
-      // fetch data via data source. Here we are using the exampleAPI that
-      // is injected as a data source.
+    populations: async (_, __, {dataSources}): Promise<void>  => {
+      // fetch data via data source. Here we are using the exampleAPI, 
+      // that is injected as a data source.
       const result = await dataSources.exampleAPI.getData()
       // ... the logic you want to test along with the pipeline logic you might have in place.
     }
@@ -69,8 +69,8 @@ export const exampleResolver = {
 };
 ```
 ### Setting up an integration Test
-To create an integration test we need the following steps:
-1. Create and set up the fetcher stub. It has to respond to the expected requests with 
+To create an integration test, we need the following steps:
+1. Create and set up the fetcher stub. It must respond to the expected requests with 
 appropriate data. This step is specific for each integration test. In this example the
 fetcher stub will return the status code 204 whenever it receives a get request with the URL 
 `http://localhost:8080/ping`
@@ -97,7 +97,7 @@ const createContext = async (): Promise<ContextValue> => {
   };
 }
 ```
-3. Create an Apollo test server that is using the a configuration close to your production server.
+3. Create an Apollo test server that is using a configuration close to your production server.
 ```typescript
 // For the integration tests, create a test server that is using
 // the prepared context for the text
@@ -107,13 +107,13 @@ const testServer = new ApolloServer<ContextValue>({
   plugins   // the real plugins
 });
 ```
-4. Run the desired GraphQL query on the test server using the prepared context
+4. Run the desired GraphQL query on the test server using the prepared context.
 ```typescript
 // create the context with the stub fetcher and real rest data sources.
 const contextValue = await createContext(); 
 
 // execute the test GraphQL query using the test server with the real configuration
-// the only thing that is stubed is the fetcher the RESTDataSource is using.
+// the only thing that is stubbed is the fetcher the RESTDataSource is using.
 // This ensures we test as much of the Apollo Stack as possible.
 const response = await testServer.executeOperation({ query }, { contextValue });
 ```
@@ -131,12 +131,12 @@ const myData = response.body['singleResult']['data']['myData'];
 ### Fluent interface of the fetcher stub
 The fetcher stub has a fluent interface that allows you to create a stub in a 
 declarative and readable way. This helps keeping the integration tests clean.
-The interface is modeled after the structure of an HTTP request. It does not provide
+The interface is modelled after the structure of an HTTP request. It does not provide
 any kind of validation though, to be open for writing tests with invalid requests.
 The following Http methods are available:
 ```typescript
 const fetcherStub = new FetcherStub()
-const URL = 'htztp://localhost:4000/some-path'
+const URL = 'http://localhost:4000/some-path'
 
 fetcherStub.get(URL);
 fetcherStub.head(URL);
@@ -162,7 +162,7 @@ fetcherStub.get(URL)
 ```
 The second parameter, the content type is optional. You could also use the withHeader function to specify a content type.
 
-After specifying the request we need to configure what the response would be. 
+After specifying the request, we need to configure what the response would be. 
 This can be as simple as returning a status code:
 ```typescript
 fetcherStub.get(URL)
@@ -181,7 +181,7 @@ fetcherStub.get(URL)
   .withStatus(201, 'Ok');
 ```
 
-But if response headers and body are needed this is can be done like this:
+But if response headers and body are needed this can be done like this:
 ```typescript
 fetcherStub.get(URL)
   .responds()
@@ -194,7 +194,7 @@ type can be specified directly as a header.
 
 With these functions even more complex scenarios can be handled. The fetcher stub collects the specification and uses it during the integration test. You could specify multiple different requests should that be necessary. Complex scenarios can be covered this way.
 
-Here is an example how to stub an preflight request (CORS scenario):
+Here is an example how to stub a preflight request (CORS scenario):
 ```typescript
 fetcherStub.options("/")
   .withHeader('Host', 'service.example.com')
@@ -206,5 +206,18 @@ fetcherStub.options("/")
   .withStatusCode(200)
   .withStatusText('Ok');
 ```
-By adding multiple requests it is also possible to handle OAUTH scenarios. This is useful when you want 
+By adding multiple requests, it is also possible to handle OAUTH scenarios. This is useful when you want 
 to test login scenarios in a fast and reliable way.
+
+Sometimes it is not good enough to provide a static URL that must be stubbed. This can be the case when you cannot 
+complete control the URL to test with. For example, when the resolver uses random values, time dependent values or other
+values that you cannot influence. In this special case you can pass a regular expression instead of a string as URL.
+As an example we could have a scenario where the uncontrollable piece of data is a query parameter named code. 
+We only know the structure of the code not the exact value. We can create a regular expression for it and use it 
+as parameter. Here it is assumed that the code consists of capital letters and digits and is exactly 8 characters long. 
+```typescript
+const fetcherStub = new FetcherStub()
+const URL = /http:\/\/localhost:4000\/some-path?code=[A-Z0-9]{8}/
+
+fetcherStub.get(URL);
+```

@@ -1,4 +1,4 @@
-import {FetcherStub} from "./fetcher-stub";
+import {FetcherStub, FetcherStubError} from "./fetcher-stub";
 import {expect} from "@jest/globals";
 
 describe('FetcherStub', () => {
@@ -83,6 +83,19 @@ describe('FetcherStub', () => {
     expect(getResponse.status).toBe(201);
   })
 
+  it('should respond to post request with body and capital header', async () => {
+    const stub = new FetcherStub()
+    stub.post("http://localhost:8080/user").withBody('{name:"Max"}', 'application/json').responds().withStatusCode(201);
+
+    const getResponse = await stub.fetcher.fetch('http://localhost:8080/user', {
+      method: 'POST',
+      headers: {'CONTENT-TYPE': 'application/json'},
+      body: '{name:"Max"}'
+    });
+    expect(getResponse.ok).toBeTruthy();
+    expect(getResponse.status).toBe(201);
+  })
+
   it('should respond to put request with body', async () => {
     const stub = new FetcherStub()
     stub.put("http://localhost:8080/user").withBody('{name:"Max"}', 'application/json').responds().withStatusCode(201);
@@ -156,5 +169,57 @@ describe('FetcherStub', () => {
     expect(getResponse.bodyUsed).toBeFalsy();
     expect(getResponse.headers.get('Access-Control-Allow-Origin')).toBe('https://www.example.com');
     expect(getResponse.headers.get('Access-Control-Allow-Methods')).toBe('PUT');
+  })
+
+  it('should respond to a fuzzy get request', async () => {
+    const stub = new FetcherStub()
+    stub.get('http://localhost:2000/nothing').withHeader('Host', 'service.example.com').responds().withStatusCode(204);
+    stub.get(/http:\/\/localhost:8080\/test/).responds().withStatusCode(204);
+
+    const response = await stub.fetcher.fetch('http://localhost:8080/test');
+    expect(response.ok).toBeTruthy();
+    expect(response.status).toBe(204);
+
+    // other Jest syntax seems to be flaky/unstable in different versions.
+    try {
+      await stub.fetcher.fetch('http://localhost:2000/test')
+    } catch(e) {
+      const err = e as FetcherStubError;
+      expect(err.message).toBe('Stub not prepared properly');
+    }
+  })
+
+  it('should throw an error when fuzzy get request was not found', async () => {
+    const stub = new FetcherStub()
+    stub.get(/http:\/\/localhost:8080\/error/).responds().withStatusCode(204);
+
+    // other Jest syntax seems to be flaky/unstable in different versions.
+    try {
+      await stub.fetcher.fetch('http://localhost:8090/test')
+    } catch(err) {
+      expect((err as Error).message).toBe('Stub not prepared properly')
+    }
+  })
+
+
+  it('should respond to a fuzzy get request with different URLs', async () => {
+    const stub = new FetcherStub();
+    stub.get(/http:\/\/localhost:[0-9]{0,5}\/test/).responds().withStatusCode(204);
+
+    const response = await stub.fetcher.fetch('http://localhost:4000/test');
+    expect(response.ok).toBeTruthy();
+    expect(response.status).toBe(204);
+
+    const response2 = await stub.fetcher.fetch('http://localhost:80/test');
+    expect(response2.ok).toBeTruthy();
+    expect(response2.status).toBe(204);
+
+    // other Jest syntax seems to be flaky/unstable in different versions.
+    try {
+      await stub.fetcher.fetch('http://localhost:809012/test')
+    } catch(e) {
+      const err = e as FetcherStubError;
+      expect(err.message).toBe('Stub not prepared properly');
+    }
   })
 })

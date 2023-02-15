@@ -1,37 +1,30 @@
-import type {FetcherRequestInit, FetcherResponse} from "@apollo/utils.fetcher";
 import {StubHeaderData} from "./stub-header-data";
+import {createExactMatcher, RequestMatcher} from "./build-request-matcher";
+import {FetcherRequestInit /*, FetcherResponse*/} from "@apollo/utils.fetcher";
 
-export class StubResponseData implements FetcherResponse {
-  readonly bodyUsed: boolean;
-  readonly headers: StubHeaderData;
-  readonly ok: boolean;
-  readonly redirected: boolean;
-  readonly status: number;
-  readonly statusText: string;
-  readonly url: string;
-  readonly body: string;
-  readonly init: FetcherRequestInit | undefined;
+export class StubResponseData {
+   bodyUsed = false;
+   headers: StubHeaderData = new StubHeaderData();
+   ok = true;
+   redirected = false;
+   status = 200;
+   statusText = 'Ok';
+   urlMatcher: RequestMatcher = createExactMatcher('');
+   body = '';
+   init: FetcherRequestInit | undefined;
+}
 
-  constructor(url: string, statusCode: number, statusText: string, headers: StubHeaderData, init?: FetcherRequestInit, body?: string) {
-    this.bodyUsed = !!body;
-    this.headers = headers;
-    this.ok = statusCode>=200 && statusCode<=299;
-    this.redirected = statusCode>=300 && statusCode<=399;
-    this.statusText = statusText;
-    this.url = url;
-    this.status = statusCode;
-    this.body = body || '';
-    this.init = init;
-  }
-
-  arrayBuffer(): Promise<ArrayBuffer> {
-    const encoder = new TextEncoder();
-    return Promise.resolve(encoder.encode(this.body));
-  }
-
-  clone = (): FetcherResponse => new StubResponseData(this.url, this.status, this.statusText, this.headers, this.init, this.body);
-
-  json = <T>(): Promise<T> => Promise.resolve(JSON.parse(this.body));
-
-  text = (): Promise<string> => Promise.resolve(this.body);
+export function createStubResponseData(urlMatcher: RequestMatcher, statusCode: number, statusText: string, headers: StubHeaderData,
+    init?: FetcherRequestInit, body?: string) : StubResponseData {
+    return {
+        bodyUsed: !!body,
+        headers,
+        ok: statusCode>=200 && statusCode<=299,
+        redirected: statusCode>=300 && statusCode<=399,
+        statusText,
+        urlMatcher: urlMatcher,
+        status: statusCode,
+        body: body || '',
+        init
+    }
 }
