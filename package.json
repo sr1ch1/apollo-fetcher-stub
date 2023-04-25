@@ -45,7 +45,7 @@
     }
   },
   "dependencies": {
-    "@apollo/utils.fetcher": "^2.0.0"
+    "@apollo/utils.fetcher": "^2.0.1"
   },
   "devDependencies": {
     "@jest/globals": "^29.4.2",
