@@ -45,7 +45,9 @@
     }
   },
   "dependencies": {
-    "@apollo/utils.fetcher": "^3.1.0"
+    "@apollo/utils.fetcher": "^3.1.0",
+    "@eslint/js": "^9.19.0",
+    "typescript-eslint": "^8.21.0"
   },
   "devDependencies": {
     "@jest/globals": "^29.7.0",

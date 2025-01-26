@@ -1,7 +1,7 @@
 import {HttpMethod} from "./http-method";
 import {FetcherStubRequest, IFetcherStubRequest} from "./fetcher-stub-request";
 import {RequestResolver} from "./request-resolver";
-import type {FetcherRequestInit} from "@apollo/utils.fetcher";
+import type {FetcherRequestInit} from '@apollo/utils.fetcher';
 import {FetcherResponse} from "@apollo/utils.fetcher";
 import {StubHeaderData} from "./stub-header-data";
 import buildRequestMatcher, {createExactMatcher} from "./build-request-matcher";

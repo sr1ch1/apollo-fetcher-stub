@@ -328,7 +328,7 @@
     minimatch "^3.1.2"
     strip-json-comments "^3.1.1"
 
-"@eslint/js@9.19.0":
+"@eslint/js@9.19.0", "@eslint/js@^9.19.0":
   version "9.19.0"
   resolved "https://registry.yarnpkg.com/@eslint/js/-/js-9.19.0.tgz#51dbb140ed6b49d05adc0b171c41e1a8713b7789"
   integrity sha512-rbq9/g38qjfqFLOVPvwjIvFFdNziEC5S65jmjPw5r6A//QH+W91akh9irMwjDN8zKUTak6W9EsAv4m/7Wnw0UQ==
@@ -918,7 +918,7 @@
   dependencies:
     "@types/yargs-parser" "*"
 
-"@typescript-eslint/eslint-plugin@^8.21.0":
+"@typescript-eslint/eslint-plugin@8.21.0", "@typescript-eslint/eslint-plugin@^8.21.0":
   version "8.21.0"
   resolved "https://registry.yarnpkg.com/@typescript-eslint/eslint-plugin/-/eslint-plugin-8.21.0.tgz#395014a75112ecdb81142b866ab6bb62e3be0f2a"
   integrity sha512-eTH+UOR4I7WbdQnG4Z48ebIA6Bgi7WO8HvFEneeYBxG8qCOYgTOFPSg6ek9ITIDvGjDQzWHcoWHCDO2biByNzA==
@@ -933,7 +933,7 @@
     natural-compare "^1.4.0"
     ts-api-utils "^2.0.0"
 
-"@typescript-eslint/parser@^8.21.0":
+"@typescript-eslint/parser@8.21.0", "@typescript-eslint/parser@^8.21.0":
   version "8.21.0"
   resolved "https://registry.yarnpkg.com/@typescript-eslint/parser/-/parser-8.21.0.tgz#312c638aaba4f640d45bfde7c6795a9d75deb088"
   integrity sha512-Wy+/sdEH9kI3w9civgACwabHbKl+qIOu0uFZ9IMKzX3Jpv9og0ZBJrZExGrPpFAY7rWsXuxs5e7CPPP17A4eYA==
@@ -3797,6 +3797,15 @@ typed-array-length@^1.0.7:
     is-typed-array "^1.1.13"
     possible-typed-array-names "^1.0.0"
     reflect.getprototypeof "^1.0.6"
+
+typescript-eslint@^8.21.0:
+  version "8.21.0"
+  resolved "https://registry.yarnpkg.com/typescript-eslint/-/typescript-eslint-8.21.0.tgz#78bdb83a6d771f0312b128297d84a3111885fd08"
+  integrity sha512-txEKYY4XMKwPXxNkN8+AxAdX6iIJAPiJbHE/FpQccs/sxw8Lf26kqwC3cn0xkHlW8kEbLhkhCsjWuMveaY9Rxw==
+  dependencies:
+    "@typescript-eslint/eslint-plugin" "8.21.0"
+    "@typescript-eslint/parser" "8.21.0"
+    "@typescript-eslint/utils" "8.21.0"
 
 typescript@^5.7.3:
   version "5.7.3"

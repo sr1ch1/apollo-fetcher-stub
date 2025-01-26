@@ -33,10 +33,10 @@ describe('StubHeaderData', () => {
     header.append('Content-Type', 'text/html');
     header.append('Content-Length', '123');
 
-    // @ts-ignore this is a false positive
+    // @ts-expect-error this is a false positive
     const keys = [...header.keys()];
 
-    // @ts-ignore this is a false positive
+    // @ts-expect-error this is a false positive
     const values = [...header.values()];
 
     expect(keys).toEqual(['Content-Type', 'Content-Length']);
@@ -60,10 +60,9 @@ describe('StubHeaderData', () => {
     header.append('Content-Type', 'text/html');
     header.append('Content-Length', '123');
 
-    // @ts-ignore this is a false positive
+    // @ts-expect-error this is a false positive
     const entries = [...header.entries()];
 
     expect(entries).toEqual([['Content-Type', 'text/html'], ['Content-Length', '123']]);
   })
 })
-

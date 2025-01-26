@@ -8,16 +8,14 @@ export enum MatcherType {
 type UMT<T, P> = { type: T, payload: P };
 
 const createMatcher = <T extends MatcherType, P>(
-    type: T,
-    payload: P
+  type: T,
+  payload: P
 ) : UMT<T, P> => ({ type, payload });
 
 export const createExactMatcher = (url: string) => createMatcher(MatcherType.MATCH_STRING, url);
 export const createRegexMatcher = (urlRegExp: RegExp) => createMatcher(MatcherType.MATCH_REGEX, urlRegExp);
 
-const matcher = {createExactMatcher, createRegexMatcher};
-
-export type RequestMatcher = ReturnType<typeof matcher[keyof typeof matcher]>;
+export type RequestMatcher = ReturnType<typeof createExactMatcher | typeof createRegexMatcher>;
 
 function escapeRegex(regex: string): string {
   return regex.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&');
