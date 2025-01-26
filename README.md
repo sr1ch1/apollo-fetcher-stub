@@ -210,7 +210,7 @@ By adding multiple requests, it is also possible to handle OAUTH scenarios. This
 to test login scenarios in a fast and reliable way.
 
 Sometimes it is not good enough to provide a static URL that must be stubbed. This can be the case when you cannot 
-complete control the URL to test with. For example, when the resolver uses random values, time dependent values or other
+completely control the URL to test with. For example, when the resolver uses random values, time dependent values or other
 values that you cannot influence. In this special case you can pass a regular expression instead of a string as URL.
 As an example we could have a scenario where the uncontrollable piece of data is a query parameter named code. 
 We only know the structure of the code not the exact value. We can create a regular expression for it and use it 
