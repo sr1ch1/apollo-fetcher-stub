@@ -29,7 +29,7 @@ describe('SimpleFetcherResponse', () => {
         expect(await response.json()).toEqual({key: {nested: 'value', valid: true}});
     });
 
-    it('should implement clone properly', async function () {
+    it('should implement arrayBuffer properly', async function () {
 
         const bodyText = '{"key": { "nested": "value", "valid": true}}';
         const response = createSimpleFetcherResponse("http://localhost", createStubResponseData(
@@ -38,7 +38,7 @@ describe('SimpleFetcherResponse', () => {
         ));
 
         const buffer = await response.arrayBuffer();
-        const s = buffer.toString();
+        const s = new Uint8Array(buffer).toString();
 
         expect(s).toBe('123,34,107,101,121,34,58,32,123,32,34,110,101,115,116,101,100,34,58,32,34,118,97,108,117,101,34,44,32,34,118,97,108,105,100,34,58,32,116,114,117,101,125,125');
     });
