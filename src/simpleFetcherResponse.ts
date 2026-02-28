@@ -6,7 +6,7 @@ export class SimpleFetcherResponse extends StubResponseData implements FetcherRe
 
     arrayBuffer(): Promise<ArrayBuffer> {
         const encoder = new TextEncoder();
-        return Promise.resolve(encoder.encode(this.body));
+        return Promise.resolve(encoder.encode(this.body).slice().buffer);
     }
 
     clone = (): FetcherResponse => createSimpleFetcherResponse(this.url, this);
@@ -22,7 +22,7 @@ export function createSimpleFetcherResponse(url: string, data: StubResponseData)
     response.headers = data.headers;
     response.ok = data.ok;
     response.redirected = data.redirected;
-    response.status = data.status
+    response.status = data.status;
     response.statusText = data.statusText;
     response.urlMatcher = data.urlMatcher;
     response.body = data.body;
